@@ -20,10 +20,17 @@
 3. CHATS Router, CHATS_SW, VLAN 10 host (on CHATS) (Tri)
 4. ISP Router, CITY2_SW, VLAN 10 host on CITY2_SW (Share)
 
+# Shortcut
+`Ctr - A` : move to beginning
+
+`Ctr - E` : move to end
+
 ## ISP
 ```
+wr erase // write erase
+reload
 conf t
-hostname ISP
+ho ISP // hostname ISP
 ipv6 unicast-routing
 no ip domain-lookup
 
@@ -80,31 +87,50 @@ exit
 
 ## CITY_RT
 ```
+! enable
+en
+! write erase == erase startup-config
+w e
+sdm prefer dual-ipv4-and-ipv6 default
+! reload
+rel
+
+en
 conf t
-hostname CITY
+! hostname CITY
+h CITY
 ipv6 unicast-routing
-no ip domain-lookup
+! no ip domain-lookup
+no ip domain-lo
+! enable secret 5 class
+ena s 5 class
+! service password-encryption 
+ser p
+! banner motd #
+ba m #Authorized access only!#
 
-enable secret 5 class
+in g0/0
+! description 'Link to GLEBE'
+des 'Link to GLEBE'
+ip ad 172.22.14.1 255.255.255.252
+ipv ad 2001:50:80:10D::/64
+! no shutdown
+no sh
 
-int g0/0
-description 'Link to GLEBE'
-ip addr 172.22.14.1 255.255.255.252
-ipv6 addr 2001:50:80:10E::/64
-no shut
-
-int g0/1.10
-description 'VLAN 10 gateway'
-ip addr 172.22.6.1 255.255.255.0
+in g0/1.10
+des 'VLAN 10 gateway'
+! encapsulation dot1Q 10
+en d 10
+ip ad 172.22.6.1 255.255.255.0
 ipv6 addr 2001:50:80:102::/64
-encapsulation dot1Q 10
-no shut
+no sh
 
 int g0/1.20
-description 'VLAN 20 gateway'
-ip addr 172.22.0.1 255.255.252.0
-ipv6 addr 2001:50:80:100::/64
-encapsulation dot1Q 20
+des 'VLAN 20 gateway'
+en d 20
+ip ad 172.22.0.1 255.255.252.0
+ipv ad 2001:50:80:100::/64
+
 ip helper-address 172.22.14.6
 ip nat inside
 no shut
@@ -162,8 +188,6 @@ ipv6 route ::/0 g0/0 2001:50:80:10D::1
 ipv6 route 2001:50:80:108::/62 s0/0/1 2001:50:80:10C::1
 ipv6 route 2001:50:80:104::/62 g0/0 2001:50:80:10D::1
 
-banner motd #Authorized access only!#
-
 access-list 1 permit host 172.22.6.254
 access-list 1 deny any
 access-list 2 permit 172.22.6.0 0.0.0.255
@@ -204,6 +228,7 @@ exit
 ip nat pool CITY_PAT 50.80.120.2 50.80.120.6 netmask 255.255.255.248
 ip nat inside source list 2 pool CITY_PAT overload
 ip nat inside source static 172.22.6.254 50.80.120.1 
+write memory命令或copy running-config startup-config
 ```
 
 
@@ -861,3 +886,25 @@ ipv6 default gateway: 2001:50:80:10A::/64
 show port-security
 ```
 
+## Show Commands
+```
+sh ip in br
+sh ip ro
+```
+
+## Connection Order
+123
+456
+10, 11, 12
+
+GLEBE_R con
+CHATS_R con
+GLEBE_SW con
+CHATS_SW con
+ISP_R con
+ISP_SW con
+CITY_R con
+CITY_SW con
+GLEBE - CHATS
+CITY - GLEBE
+CITY - CHATS
