@@ -11,6 +11,12 @@
 * [ ]  whether vlan on switches need to add ipv6 addr
 * [ ]  ipv6 on switches?
 
+# Task
+1. CITY Router, CITY1_SW, PC admin (Steven)
+2. GLEBE Router, GLEBE_SW, PC VLAN 20 host (Zhuang)
+3. CHATS Router, CHATS_SW, VLAN 10 host (on CHATS) (Tri)
+4. ISP Router, CITY2_SW, VLAN 10 host on CITY2_SW (Share)
+
 ## ISP
 ```
 conf t
