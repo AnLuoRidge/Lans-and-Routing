@@ -1,5 +1,8 @@
 #  F**king Command
 
+* [ ]  reload
+* [ ]  IPv6 initial
+* [ ]  password recovery
 * [ ]  fix clock rate
 * [ ]  fix ssh and add acl on them
 * [ ]  fix access-list
