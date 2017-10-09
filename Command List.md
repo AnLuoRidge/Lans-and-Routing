@@ -1,18 +1,18 @@
 #  F**king Command
 
-* [ ] reload
-* [ ] IPv6 initial
+* [x] reload
+* [x] IPv6 initial
 * [ ] password recovery
-* [ ] fix clock rate
+* [x] fix clock rate
 * [x] fix ssh and add acl on them
 * [x] fix access-list
 * [x] fix dhcp which relate to access-list
-* [ ] check whether need to shutdown unused port
-* [ ] do we need ip domain-name ?
-* [ ] need to check whether the switches we use in the class have extra types of interfaces
+* [x] check whether need to shutdown unused port
+* [x] do we need ip domain-name ?
+* [x] need to check whether the switches we use in the class have extra types of interfaces
 * [x] Port security is required on all access ports, with a maximum of one MAC Address per port. Any violation should shut down the port.
-* [ ] whether vlan on switches need to add ipv6 addr
-* [ ] ipv6 on switches?
+* [x] whether vlan on switches need to add ipv6 addr
+* [x] ipv6 on switches?
 
 # Task
 1. CITY Router, CITY1_SW, PC admin (Steven)
@@ -410,6 +410,11 @@ exit
 ## CHATS_RT
 
 ```
+! write erase
+w e
+prefer dual-ipv4-and-ipv6 default
+rel
+
 conf t
 h CHATS
 ipv u
@@ -523,11 +528,14 @@ logging synchronous
 exit
 ```
 
-
-
 ## CITY1_SW
 
 ```
+! write erase
+w e
+prefer dual-ipv4-and-ipv6 default
+rel
+
 conf t
 h CITY1_SW
 no ip domain-l
@@ -609,8 +617,13 @@ exit
 ## CITY2_SW
 
 ```
+! write erase
+w e
+prefer dual-ipv4-and-ipv6 default
+rel
+
 conf t
-hostname CITY2_SW
+h CITY2_SW
 no ip domain-l
 
 enable secret class
@@ -711,11 +724,16 @@ exit
 ## GLEBE_SW
 
 ```
-conf t
-hostname GLEBE_SW
-no ip domain-lookup
+! write erase
+w e
+prefer dual-ipv4-and-ipv6 default
+rel
 
-enable secret 5 class
+conf t
+h GLEBE_SW
+no ip domain-l
+
+enable secret class
 
 vlan 10
 name Excutive
@@ -727,6 +745,7 @@ vlan 137
 name Management
 vlan 459
 name Blackhole
+ex
 
 # vlan10:vlan20:vlan30 = 1:8.5:8.5, 1 for vlan137(Trunk), others for blackhole
 int fa0/1
@@ -734,15 +753,15 @@ description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
 switchport port-security
-no shut
+no sh
 
-int range fa0/2 - 10
+int r fa0/2 - 10
 description VLAN 20 interface
 switchport mode access
 switchport access vlan 20
 switchport port-security
 no ip address
-no shut
+no sh
 
 int range fa0/11 - 19
 description VLAN 30 interface
@@ -750,7 +769,7 @@ switchport mode access
 switchport access vlan 30
 switchport port-security
 no ip address
-no shut
+no sh
 
 int range fa0/20 - 23
 switchport mode access
@@ -768,7 +787,7 @@ no shut
 
 no vlan 459
 
-# check whether have others unused interfaces, if so, put them in blackhole vlan.
+! check whether have others unused interfaces, if so, put them in blackhole vlan.
 
 
 int Vlan 137
@@ -812,9 +831,14 @@ exit
 ## CHATS_SW
 
 ```
+! write erase
+w e
+prefer dual-ipv4-and-ipv6 default
+rel
+
 conf t
-hostname GLEBE_SW
-no ip domain-lookup
+h GLEBE_SW
+no ip domain-l
 ipv u
 
 enable secret class
@@ -831,7 +855,7 @@ vlan 459
 name Blackhole
 ex
 
-# vlan10:vlan20:vlan30 = 1:4:4, 1 for vlan137(Trunk), others for blackhole
+! vlan10:vlan20:vlan30 = 1:4:4, 1 for vlan137(Trunk), others for blackhole
 
 int r fa0/1 - 2
 description VLAN 10 interface
@@ -840,7 +864,7 @@ switchport access vlan 10
 switchport port-security
 no shut
 
-int range fa0/3 - 10
+int r fa0/3 - 10
 description VLAN 20 interface
 switchport mode access
 switchport access vlan 20
@@ -945,16 +969,16 @@ subnet mask 255.255.255.224
 ipv6 address: 2001:50:80:10A::1/64
 ipv6 default gateway: 2001:50:80:10A::
 ```
+## Password Revovery
+reboot
+open Putty and hold `break` / `Ctr-break`
+confreg 0x2142
+reset
+copy s r
+config-register 0x2102
+c r s
 
-
-
-## Verify Commands
-
-```
-show port-security
-```
-
-## Show Commands
+## Troubleshooting Commands
 ```
 sh ip i b
 sh ip ro
@@ -962,6 +986,8 @@ sh ipv ro
 ! show ip ssh
 sh ip s
 sh protocols
+show port-security
+show access-lists 2
 ```
 
 ## Connection Order
@@ -974,9 +1000,9 @@ CHATS_R con
 GLEBE_SW con
 CHATS_SW con
 ISP_R con
-ISP_SW con
 CITY_R con
 CITY_SW con
+CITY2_SW con
 GLEBE - CHATS
 CITY - GLEBE
 CITY - CHATS
@@ -987,10 +1013,3 @@ failure: all hosts ping 11.11.11.11 & 2001:11:11:11:：11
 host ssh to devices: should be denied
 NA ssh to devices
 DHCP, SLAAC
-
-City VLAN 10 - ISP
-CTY Host - GLE host
-GLE - CHS
-DHCP
-IPv6
-SSH
