@@ -348,6 +348,7 @@ sh
 
 router rip
 version 2
+r s
 passive-interface g0/1
 passive-interface s0/0/1
 network 172.22.0.0
