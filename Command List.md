@@ -141,6 +141,9 @@ ipv ad 2001:50:80:10D::/64
 ! no shutdown
 no sh
 
+in g0/1
+no shut
+
 in g0/1.10
 des VLAN 10 gateway
 ! encapsulation dot1Q 10
@@ -246,6 +249,13 @@ exec-timeout 10
 password cisco
 login
 logging synchronous
+end
+
+conf t
+! ip ssh time-out 75
+ip s t 
+! ip ssh authentication-retries 2
+ip s a 2
 
 ip nat pool CITY_PAT 50.80.120.2 50.80.120.6 netmask 255.255.255.248
 ip nat inside source list 2 pool CITY_PAT overload
@@ -378,6 +388,12 @@ end
 show ip ssh
 
 conf t
+! ip ssh time-out 75
+ip s t 
+! ip ssh authentication-retries 2
+ip s a 2
+
+conf t
 ip nat pool GLEBE_PAT 50.80.120.10 50.80.120.14 netmask 255.255.255.248
 ip nat inside source list 2 pool GLEBE_PAT overload
 ip nat inside source static 172.22.6.254 50.80.120.9 
@@ -490,6 +506,11 @@ end
 show ip ssh
 
 conf t
+! ip ssh time-out 75
+ip s t 
+! ip ssh authentication-retries 2
+ip s a 2
+
 line con 0
 exec-timeout 10
 password cisco
@@ -504,10 +525,10 @@ exit
 
 ```
 conf t
-hostname CITY1_SW
-no ip domain-lookup
+h CITY1_SW
+no ip domain-l
 
-enable secret 5 class
+enable secret class
 
 vlan 10
 name Excutive
@@ -516,13 +537,13 @@ name Management
 vlan 459
 name Blackhole
 
-# 1 for vlan10(network admin), 1 for vlan137(Trunk), 2 for connections to rt and sw, others for blackhole
+! 1 for vlan10(network admin), 1 for vlan137(Trunk), 2 for connections to rt and sw, others for blackhole
 int fa0/1
 description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
 switchport port-security
-no ip address
+! no ip address
 no shut
 
 int range fa0/2 - 22
@@ -533,7 +554,7 @@ no ip address
 no shut
 
 int range f0/23 - 24
-description Trunk
+des Trunk
 switchport trunk native vlan 137
 switchport trunk allowed vlan 10,20,30,137
 switchport mode trunk
@@ -555,7 +576,9 @@ access-list 1 deny any
 banner motd #Authorized access only!#
 
 ip domain-name ccna-lab.com
-crypto key generate rsa modulus 1024
+! in lab, use crypto key generate rsa modulus 1024
+cr k g r
+1024
 username CaseStudy privilege 15 secret cisco1
 
 line vty 0 15
@@ -584,9 +607,9 @@ exit
 ```
 conf t
 hostname CITY2_SW
-no ip domain-lookup
+no ip domain-l
 
-enable secret 5 class
+enable secret class
 
 vlan 10
 name Excutive
@@ -654,7 +677,9 @@ access-list 1 deny any
 banner motd #Authorized access only!#
 
 ip domain-name ccna-lab.com
-crypto key generate rsa modulus 1024
+! in lab, use crypto key generate rsa modulus 1024
+cr k g r
+1024
 username CaseStudy privilege 15 secret cisco1
 
 line vty 0 15
