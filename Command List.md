@@ -827,7 +827,7 @@ vlan 459
 name Blackhole
 
 # vlan10:vlan20:vlan30 = 1:4:4, 1 for vlan137(Trunk), others for blackhole
-int fa0/1 - 2
+int range fa0/1 - 2
 description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
@@ -911,7 +911,7 @@ exit
 ip address: 172.22.6.254
 default gateway: 172.22.6.1
 subnet mask 255.255.255.0
-ipv6 address: 2001:0050:0080:0103:FFFF:FFFF:FFFF:FFFF
+ipv6 address: 2001:50:80:102:FFFF:FFFF:FFFF:FFFF
 ipv6 default gateway: 2001:50:80:102::/64
 ```
 
