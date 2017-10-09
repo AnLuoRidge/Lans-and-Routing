@@ -27,22 +27,25 @@
 
 ## ISP
 ```
-wr erase // write erase
-reload
+! write erase
+w e
+prefer dual-ipv4-and-ipv6 default
+rel
+
 conf t
-ho ISP // hostname ISP
-ipv6 unicast-routing
-no ip domain-lookup
+h ISP
+ipv u
+no ip domain-l
 
-enable secret 5 class
+ena s class
 
-int Loopback0
+in Loopback0
 description Loop back
 ip addr 11.11.11.11 255.255.255.255
 ipv6 addr 2001:11:11:11::11/128
-no shut
+no sh
 
-int s0/0/0
+in s0/0/0
 description Link to CITY
 ip addr 50.80.120.17 255.255.255.252
 ipv6 addr 2001:50:80:120::/64
@@ -65,7 +68,9 @@ ipv6 route 2001:50:80:100::/56 Serial0/0/1 2001:50:80:121::2 5
 banner motd #Authorized access only!#
 
 ip domain-name ccna-lab.com
-crypto key generate rsa modulus 1024
+! in lab, use crypto key generate rsa modulus 1024
+cr k g r
+1024
 username CaseStudy privilege 15 secret cisco1
 
 line vty 0 4
@@ -215,8 +220,9 @@ ac 2 d a
 
 ! ip domain-name ccna-lab.com
 ip domain-n ccna-lab.com
-! crypto key generate rsa modulus 1024
-cr k g r modulus 1024
+! in lab, use crypto key generate rsa modulus 1024
+cr k g r
+1024
 ! username CaseStudy privilege 15 secret cisco1
 u CaseStudy pr 15 s cisco1
 
@@ -309,20 +315,20 @@ no sh
 
 int g0/1.137
 description Native VLAN 137 gateway
+! encapsulation dot1Q 137 native
+en d 137 n
 ip addr 172.22.10.32 255.255.255.240
 ipv6 addr 2001:50:80:107::/64
-encapsulation dot1Q 137 native
 no shut
 
 int s0/0/1
 description Link to ISP
 ip addr 50.80.120.22 255.255.255.252
-ipv6 addr 2001:50:80:121::1/64
-no shut
+ipv ad 2001:50:80:121::1/64
+no sh
 
 int Vlan1
-no ip address
-shutdown
+sh
 
 router rip
 version 2
@@ -332,12 +338,12 @@ network 172.22.0.0
 no auto-summary
 
 ip route 0.0.0.0 0.0.0.0 s0/0/1 121
-ipv6 route ::/0 s0/0/1 2001:50:80:121::
+ipv6 route ::/0 s0/0/1 2001:50:80:121:: 5
 ipv6 route 2001:50:80:100::/62 GigabitEthernet0/0 2001:50:80:10C::1
 ipv6 route 2001:50:80:108::/62 GigabitEthernet0/0 2001:50:80:10C::1
 ipv6 route 2001:50:80:10C::/64 GigabitEthernet0/0 2001:50:80:10C::1
-# should be only the link between city and chats, so use /64
-# ipv6 route 2001:50:80:10C::/62 GigabitEthernet0/0 2001:50:80:10C::1
+! should be only the link between city and chats, so use /64
+! ipv6 route 2001:50:80:10C::/62 GigabitEthernet0/0 2001:50:80:10C::1
 
 banner motd #Authorized access only!#
 
@@ -356,7 +362,9 @@ access-list 2 permit 172.22.12.128 0.0.0.127
 access-list 2 deny any
 
 ip domain-name ccna-lab.com
-crypto key generate rsa modulus 1024
+! in lab, use crypto key generate rsa modulus 1024
+cr k g r
+1024
 username CaseStudy privilege 15 secret cisco1
 
 line vty 0 4
@@ -368,6 +376,7 @@ logging synchronous
 end
 show ip ssh
 
+conf t
 ip nat pool GLEBE_PAT 50.80.120.10 50.80.120.14 netmask 255.255.255.248
 ip nat inside source list 2 pool GLEBE_PAT overload
 ip nat inside source static 172.22.6.254 50.80.120.9 
@@ -379,20 +388,18 @@ password cisco
 login
 logging synchronous
 exit
-
 ```
-
 
 
 ## CHATS_RT
 
 ```
 conf t
-hostname CHATS
-ipv6 unicast-routing
-no ip domain-lookup
+h CHATS
+ipv u
+no ip domain-l
 
-enable secret 5 class
+enable secret class
 
 int g0/0.10
 description VLAN 10 gateway
@@ -467,7 +474,9 @@ network 172.22.12.128 255.255.255.128
 default-router 172.22.12.129
 
 ip domain-name ccna-lab.com
-crypto key generate rsa modulus 1024
+! in lab, use crypto key generate rsa modulus 1024
+cr k g r
+1024
 username CaseStudy privilege 15 secret cisco1
 
 line vty 0 4
