@@ -144,9 +144,6 @@ ipv ad 2001:50:80:10D::/64
 ! no shutdown
 no sh
 
-in g0/1
-no shut
-
 in g0/1.10
 des VLAN 10 gateway
 ! encapsulation dot1Q 10
@@ -154,7 +151,6 @@ en d 10
 ip ad 172.22.6.1 255.255.255.0
 ipv ad 2001:50:80:102::/64
 ip nat inside
-no sh
 
 in g0/1.20
 des VLAN 20 gateway
@@ -164,7 +160,6 @@ ipv ad 2001:50:80:100::/64
 ! DHCP
 ip helper-address 172.22.14.6
 ip nat inside
-no sh
 
 int g0/1.30
 des VLAN 30 gateway
@@ -174,7 +169,6 @@ ipv ad 2001:50:80:101::/64
 ! DHCP
 ip helper-address 172.22.14.6
 ip nat inside
-no sh
 
 int g0/1.137
 des Native VLAN 137 gateway
@@ -182,7 +176,9 @@ des Native VLAN 137 gateway
 en d 137 n
 ip ad 172.22.7.1 255.255.255.240
 ipv ad 2001:50:80:103::/64
-no sh
+
+in g0/1
+no shut
 
 int Vlan1
 sh
@@ -297,10 +293,7 @@ in g0/0
 des Link to CITY
 ip address 172.22.14.2 255.255.255.252
 ipv6 address 2001:50:80:10D::1/64
-no shut
-
-in g0/1
-no shut
+no sh
 
 in g0/1.10
 description VLAN 10 gateway
@@ -308,41 +301,39 @@ description VLAN 10 gateway
 en d 10
 ip addr 172.22.10.1 255.255.255.224
 ipv6 addr 2001:50:80:106::/64
-no shut
+ip nat inside
 
 int g0/1.20
 description VLAN 20 gateway
 en d 20
 ip addr 172.22.8.1 255.255.255.0
 ipv6 addr 2001:50:80:104::/64
-
 ip helper-address 172.22.14.6
 ip nat inside
-no shut
 
 int g0/1.30
 description VLAN 30 gateway
 en d 30
 ip addr 172.22.9.1 255.255.255.0
 ipv6 addr 2001:50:80:105::/64
-
 ip helper-address 172.22.14.6
 ip nat inside
-no sh
 
 int g0/1.137
 description Native VLAN 137 gateway
-
 ! encapsulation dot1Q 137 native
 en d 137 n
 ip ad 172.22.10.33 255.255.255.240
 ipv6 addr 2001:50:80:107::/64
+
+in g0/1
 no shut
 
 int s0/0/1
 description Link to ISP
 ip addr 50.80.120.22 255.255.255.252
 ipv ad 2001:50:80:121::1/64
+ip nat ouside
 no sh
 
 int Vlan1
@@ -358,9 +349,9 @@ no auto-summary
 
 ip route 0.0.0.0 0.0.0.0 s0/0/1 121
 ipv6 route ::/0 s0/0/1 2001:50:80:121:: 5
-ipv6 route 2001:50:80:100::/62 GigabitEthernet0/0 2001:50:80:10C::1
-ipv6 route 2001:50:80:108::/62 GigabitEthernet0/0 2001:50:80:10C::1
-ipv6 route 2001:50:80:10C::/64 GigabitEthernet0/0 2001:50:80:10C::1
+ipv6 route 2001:50:80:100::/62 GigabitEthernet0/0 2001:50:80:10D
+ipv6 route 2001:50:80:108::/62 GigabitEthernet0/0 2001:50:80:10D
+ipv6 route 2001:50:80:10C::/64 GigabitEthernet0/0 2001:50:80:10D
 ! should be only the link between city and chats, so use /64
 ! ipv6 route 2001:50:80:10C::/62 GigabitEthernet0/0 2001:50:80:10C::1
 
@@ -435,7 +426,6 @@ description VLAN 10 gateway
 en d 10
 ip addr 172.22.13.1 255.255.255.224
 ipv6 addr 2001:50:80:10A::/64
-no shut
 
 int g0/0.20
 description VLAN 20 gateway
@@ -443,7 +433,6 @@ description VLAN 20 gateway
 en d 20
 ip addr 172.22.12.1 255.255.255.0
 ipv6 addr 2001:50:80:108::/64
-no shut
 
 int g0/0.30
 description VLAN 30 gateway
@@ -451,7 +440,6 @@ description VLAN 30 gateway
 en d 30
 ip addr 172.22.12.129 255.255.255.128
 ipv6 addr 2001:50:80:109::/64
-no shut
 
 int g0/0.137
 description Native VLAN 137 gateway
@@ -459,6 +447,8 @@ description Native VLAN 137 gateway
 en d 137 n
 ip addr 172.22.13.33 255.255.255.240
 ipv6 addr 2001:50:80:10B::/64
+
+int g0/0
 no shut
 
 int s0/0/1
@@ -842,6 +832,7 @@ name Blackhole
 ex
 
 # vlan10:vlan20:vlan30 = 1:4:4, 1 for vlan137(Trunk), others for blackhole
+
 int r fa0/1 - 2
 description VLAN 10 interface
 switchport mode access
@@ -929,7 +920,7 @@ exit
 ip address: 172.22.6.254
 default gateway: 172.22.6.1
 subnet mask 255.255.255.0
-ipv6 address: 2001:0050:0080:0103:FFFF:FFFF:FFFF:FFFF
+ipv6 address: 2001:50:80:102:FFFF:FFFF:FFFF:FFFF
 ipv6 default gateway: 2001:50:80:102::/64
 ```
 
