@@ -102,12 +102,29 @@ h CITY
 ipv6 unicast-routing
 ! no ip domain-lookup
 no ip domain-lo
-! enable secret 5 class
-ena s 5 class
+! enable secret class
+ena s class
 ! service password-encryption 
 ser p
 ! banner motd #
 ba m #Authorized access only!#
+
+in s0/0/0
+des 'Link to ISP'
+ip ad 50.80.120.18 255.255.255.252
+ipv ad 2001:50:80:120::1/64
+! ip nat outside
+ip n o
+no sh
+
+in s0/0/1
+des 'Link to CHATS'
+ip ad 172.22.14.5 255.255.255.252
+ipv ad 2001:50:80:10C::/64
+! ip nat inside
+ip n i
+clock rate 128000
+no shut
 
 in g0/0
 ! description 'Link to GLEBE'
@@ -122,7 +139,7 @@ des 'VLAN 10 gateway'
 ! encapsulation dot1Q 10
 en d 10
 ip ad 172.22.6.1 255.255.255.0
-ipv6 addr 2001:50:80:102::/64
+ipv ad 2001:50:80:102::/64
 no sh
 
 int g0/1.20
@@ -131,88 +148,87 @@ en d 20
 ip ad 172.22.0.1 255.255.252.0
 ipv ad 2001:50:80:100::/64
 
-ip helper-address 172.22.14.6
-ip nat inside
-no shut
-
 int g0/1.30
-description 'VLAN 30 gateway'
-ip addr 172.22.4.1 255.255.254.0
-ipv6 addr 2001:50:80:101::/64
-encapsulation dot1Q 30
-ip helper-address 172.22.14.6
-ip nat inside
-no shut
+des 'VLAN 30 gateway'
+en d 30
+ip ad 172.22.4.1 255.255.254.0
+ipv ad 2001:50:80:101::/64
+no sh
 
 int g0/1.137
-description 'Native VLAN 137 gateway'
-ip addr 172.22.7.17 255.255.255.252
-ipv6 addr 2001:50:80:103::/64
-encapsulation dot1Q 137 native
-no shut
+des 'Native VLAN 137 gateway'
+en d 137 n
+ip ad 172.22.7.1 255.255.255.240
+ipv ad 2001:50:80:103::/64
+! encapsulation dot1Q 137 native
+no sh
 
-int s0/0/0
-description 'Link to ISP'
-ip addr 50.80.120.18 255.255.255.252
-ipv6 addr 2001:50:80:120::1/64
-ip nat outside
-no shut
-
-int s0/0/1
-description 'Link to CHATS'
-ip addr 172.22.14.5 255.255.255.252
-ipv6 addr 2001:50:80:10C::/64
-ip nat inside
-clock rate 128000
-no shut
+! DHCP
+ip helper-address 172.22.14.6
+ip n i
+no sh
 
 int Vlan1
-no ip address
-shutdown
+sh
 
 # routing
-router rip
-version 2
-redistribute static 
-passive-interface g0/1
-passive-interface s0/0/0
-passive-interface s0/0/1
-network 172.22.0.0
-no auto-summary
+! router rip
+ro r
+! version 2
+v 2
+! redistribute static 
+r s
+! passive-interface g0/1
+p g0/1
+p s0/0/0
+p s0/0/1
+! network 172.22.0.0
+ne 172.22.0.0
+! no auto-summary
+no a
 
 ip route 0.0.0.0 0.0.0.0 s0/0/0
 ip route 172.22.12.0 255.255.252.0 s0/0/1
-
+! ipv6 route
 ipv6 route ::/0 s0/0/0 2001:50:80:120::
-ipv6 route ::/0 g0/0 2001:50:80:10D::1
+ipv6 route ::/0 g0/0 2001:50:80:10D::1 5
 ipv6 route 2001:50:80:108::/62 s0/0/1 2001:50:80:10C::1
 ipv6 route 2001:50:80:104::/62 g0/0 2001:50:80:10D::1
+! access-list 1 permit host 172.22.6.254
+ac 1 p h 172.22.6.254
+! deny any
+ac 1 d a
+ac 2 p 172.22.6.0 0.0.0.255
+ac 2 p 172.22.0.0 0.0.3.255
+ac 2 p 172.22.4.0 0.0.1.255
+ac 2 p 172.22.10.0 0.0.0.31
+ac 2 p 172.22.8.0 0.0.0.255
+ac 2 p 172.22.9.0 0.0.0.255
+ac 2 p 172.22.13.0 0.0.0.31
+ac 2 p 172.22.12.0 0.0.0.127
+ac 2 p 172.22.12.128 0.0.0.127
+ac 2 d a
 
-access-list 1 permit host 172.22.6.254
-access-list 1 deny any
-access-list 2 permit 172.22.6.0 0.0.0.255
-access-list 2 permit 172.22.0.0 0.0.3.255
-access-list 2 permit 172.22.4.0 0.0.1.255
-access-list 2 permit 172.22.10.0 0.0.0.31
-access-list 2 permit 172.22.8.0 0.0.0.255
-access-list 2 permit 172.22.9.0 0.0.0.255
-access-list 2 permit 172.22.13.0 0.0.0.31
-access-list 2 permit 172.22.12.0 0.0.0.127
-access-list 2 permit 172.22.12.128 0.0.0.127
-access-list 2 deny any
+! ip domain-name ccna-lab.com
+ip domain-n ccna-lab.com
+! crypto key generate rsa modulus 1024
+cr k g r modulus 1024
+! username CaseStudy privilege 15 secret cisco1
+u CaseStudy pr 15 s cisco1
 
-ip domain-name ccna-lab.com
-crypto key generate rsa modulus 1024
-username CaseStudy privilege 15 secret cisco1
-
-line vty 0 4
-access-class 1 in
-exec-timeout 10
-transport input ssh
-login local 
-logging synchronous
+! line vty
+line v 0 4
+! access-class 1 in
+acce 1 in
+! exec-timeout 10
+exe 10
+! transport input ssh
+t i s
+! login local
+login l 
+! logging synchronous
+logg s
 end
-show ip ssh
 
 conf t
 line con 0
@@ -221,15 +237,17 @@ password cisco
 login
 logging synchronous
 exit
-
-
+! write memory = copy running-config startup-config
+w m
+```
 
 # need to modify also
+```
 ip nat pool CITY_PAT 50.80.120.2 50.80.120.6 netmask 255.255.255.248
 ip nat inside source list 2 pool CITY_PAT overload
 ip nat inside source static 172.22.6.254 50.80.120.1 
-write memory命令或copy running-config startup-config
 ```
+
 
 
 ## GLEBE_RT
@@ -888,8 +906,10 @@ show port-security
 
 ## Show Commands
 ```
-sh ip in br
+sh ip i b
 sh ip ro
+! show ip ssh
+sh ip s
 ```
 
 ## Connection Order
