@@ -37,20 +37,20 @@ no ip domain-lookup
 enable secret 5 class
 
 int Loopback0
-description 'Loop back'
+description Loop back
 ip addr 11.11.11.11 255.255.255.255
 ipv6 addr 2001:11:11:11::11/128
 no shut
 
 int s0/0/0
-description 'Link to CITY'
+description Link to CITY
 ip addr 50.80.120.17 255.255.255.252
 ipv6 addr 2001:50:80:120::/64
 clock rate 128000
 no shut
 
 int s0/0/1
-description 'Link to GLEBE'
+description Link to GLEBE
 ip addr 50.80.120.21 255.255.255.252
 ipv6 addr 2001:50:80:121::/64
 clock rate 128000
@@ -91,7 +91,7 @@ exit
 en
 ! write erase == erase startup-config
 w e
-sdm prefer dual-ipv4-and-ipv6 default
+prefer dual-ipv4-and-ipv6 default
 ! reload
 rel
 
@@ -99,7 +99,8 @@ en
 conf t
 ! hostname CITY
 h CITY
-ipv6 unicast-routing
+! ipv6 unicast-routing
+ipv u
 ! no ip domain-lookup
 no ip domain-lo
 ! enable secret class
@@ -110,7 +111,7 @@ ser p
 ba m #Authorized access only!#
 
 in s0/0/0
-des 'Link to ISP'
+des Link to ISP
 ip ad 50.80.120.18 255.255.255.252
 ipv ad 2001:50:80:120::1/64
 ! ip nat outside
@@ -118,7 +119,7 @@ ip n o
 no sh
 
 in s0/0/1
-des 'Link to CHATS'
+des Link to CHATS
 ip ad 172.22.14.5 255.255.255.252
 ipv ad 2001:50:80:10C::/64
 ! ip nat inside
@@ -128,41 +129,46 @@ no shut
 
 in g0/0
 ! description 'Link to GLEBE'
-des 'Link to GLEBE'
+des Link to GLEBE
 ip ad 172.22.14.1 255.255.255.252
 ipv ad 2001:50:80:10D::/64
 ! no shutdown
 no sh
 
 in g0/1.10
-des 'VLAN 10 gateway'
+des VLAN 10 gateway
 ! encapsulation dot1Q 10
 en d 10
 ip ad 172.22.6.1 255.255.255.0
 ipv ad 2001:50:80:102::/64
 no sh
 
-int g0/1.20
-des 'VLAN 20 gateway'
+in g0/1.20
+des VLAN 20 gateway
 en d 20
 ip ad 172.22.0.1 255.255.252.0
 ipv ad 2001:50:80:100::/64
+! DHCP
+ip helper-address 172.22.14.6
+ip nat inside
+no sh
 
 int g0/1.30
-des 'VLAN 30 gateway'
+des VLAN 30 gateway
 en d 30
 ip ad 172.22.4.1 255.255.254.0
 ipv ad 2001:50:80:101::/64
+! DHCP
+ip helper-address 172.22.14.6
+ip nat inside
 no sh
 
 int g0/1.137
-des 'Native VLAN 137 gateway'
+des Native VLAN 137 gateway
+! encapsulation dot1Q 137 native
 en d 137 n
 ip ad 172.22.7.1 255.255.255.240
 ipv ad 2001:50:80:103::/64
-! encapsulation dot1Q 137 native
-no sh
-
 ! DHCP
 ip helper-address 172.22.14.6
 ip n i
@@ -236,70 +242,82 @@ exec-timeout 10
 password cisco
 login
 logging synchronous
-exit
-! write memory = copy running-config startup-config
-w m
-```
 
-# need to modify also
-```
 ip nat pool CITY_PAT 50.80.120.2 50.80.120.6 netmask 255.255.255.248
 ip nat inside source list 2 pool CITY_PAT overload
 ip nat inside source static 172.22.6.254 50.80.120.1 
-```
 
+exit
+! write memory == copy running-config startup-config
+w m
+```
 
 
 ## GLEBE_RT
 
 ```
-conf t
-hostname GLEBE
-ipv6 unicast-routing
-no ip domain-lookup
+! enable
+en
+! write erase == erase startup-config
+w e
+sdm prefer dual-ipv4-and-ipv6 default
+! reload
+rel
 
-enable secret 5 class
+en
+conf t
+! hostname
+h GLEBE
+! ipv6 unicast-routing
+ipv u
+! no ip domain-lookup
+no ip domain-l
+
+enable secret class
 
 int g0/0
-description 'Link to CITY'
+des Link to CITY
 ip address 172.22.14.2 255.255.255.252
 ipv6 address 2001:50:80:10D::1/64
 no shut
 
 int g0/1.10
-description 'VLAN 10 gateway'
+description VLAN 10 gateway
+! encapsulation dot1Q 10
+en d 10
 ip addr 172.22.10.1 255.255.255.224
 ipv6 addr 2001:50:80:106::/64
-encapsulation dot1Q 10
 no shut
 
 int g0/1.20
-description 'VLAN 20 gateway'
+description VLAN 20 gateway
+en d 20
 ip addr 172.22.8.1 255.255.255.0
 ipv6 addr 2001:50:80:104::/64
-encapsulation dot1Q 20
+
 ip helper-address 172.22.14.6
 ip nat inside
 no shut
 
 int g0/1.30
-description 'VLAN 30 gateway'
+description VLAN 30 gateway
+en d 30
 ip addr 172.22.9.1 255.255.255.0
 ipv6 addr 2001:50:80:105::/64
-encapsulation dot1Q 30
+
 ip helper-address 172.22.14.6
 ip nat inside
-no shut
+no sh
 
 int g0/1.137
-description 'Native VLAN 137 gateway'
+description Native VLAN 137 gateway
 ip addr 172.22.10.32 255.255.255.240
 ipv6 addr 2001:50:80:107::/64
 encapsulation dot1Q 137 native
 no shut
 
 int s0/0/1
-description 'Link to ISP'
+description Link to ISP
 ip addr 50.80.120.22 255.255.255.252
 ipv6 addr 2001:50:80:121::1/64
 no shut
@@ -379,35 +397,35 @@ no ip domain-lookup
 enable secret 5 class
 
 int g0/0.10
-description 'VLAN 10 gateway'
+description VLAN 10 gateway
 ip addr 172.22.13.1 255.255.255.224
 ipv6 addr 2001:50:80:10A::/64
 encapsulation dot1Q 10
 no shut
 
 int g0/0.20
-description 'VLAN 20 gateway'
+description VLAN 20 gateway
 ip addr 172.22.12.1 255.255.255.0
 ipv6 addr 2001:50:80:108::/64
 encapsulation dot1Q 20
 no shut
 
 int g0/0.30
-description 'VLAN 30 gateway'
+description VLAN 30 gateway
 ip addr 172.22.12.129 255.255.255.128
 ipv6 addr 2001:50:80:109::/64
 encapsulation dot1Q 30
 no shut
 
 int g0/0.137
-description 'Native VLAN 137 gateway'
+description Native VLAN 137 gateway
 ip addr 172.22.13.32 255.255.255.240
 ipv6 addr 2001:50:80:10B::/64
 encapsulation dot1Q 137 native
 no shut
 
 int s0/0/1
-description 'Link to CITY'
+description Link to CITY
 ip addr 172.22.14.6 255.255.255.252
 ipv6 addr 2001:50:80:10C::1/64
 no shut
@@ -492,7 +510,7 @@ name Blackhole
 
 # 1 for vlan10(network admin), 1 for vlan137(Trunk), 2 for connections to rt and sw, others for blackhole
 int fa0/1
-description 'VLAN 10 interface'
+description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
 switchport port-security
@@ -507,7 +525,7 @@ no ip address
 no shut
 
 int range f0/23 - 24
-description 'Trunk'
+description Trunk
 switchport trunk native vlan 137
 switchport trunk allowed vlan 10,20,30,137
 switchport mode trunk
@@ -575,7 +593,7 @@ name Blackhole
 
 # vlan10:vlan20:vlan30 = 1:4:2, 1 for vlan137(Trunk), others for blackhole
 int fa0/1 - 3
-description 'VLAN 10 interface'
+description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
 switchport port-security
@@ -583,7 +601,7 @@ no ip address
 no shut
 
 int range fa0/4 - 15
-description 'VLAN 20 interface'
+description VLAN 20 interface
 switchport mode access
 switchport access vlan 20
 switchport port-security
@@ -591,7 +609,7 @@ no ip address
 no shut
 
 int range f0/16 - 21
-description 'VLAN 30 interface'
+description VLAN 30 interface
 switchport mode access
 switchport access vlan 30
 switchport port-security
@@ -599,7 +617,7 @@ no ip address
 no shut
 
 int fa0/24
-description 'Trunk'
+description Trunk
 switchport trunk native vlan 137
 switchport trunk allowed vlan 10,20,30,137
 switchport mode trunk
@@ -674,14 +692,14 @@ name Blackhole
 
 # vlan10:vlan20:vlan30 = 1:8.5:8.5, 1 for vlan137(Trunk), others for blackhole
 int fa0/1
-description 'VLAN 10 interface'
+description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
 switchport port-security
 no shut
 
 int range fa0/2 - 10
-description 'VLAN 20 interface'
+description VLAN 20 interface
 switchport mode access
 switchport access vlan 20
 switchport port-security
@@ -689,7 +707,7 @@ no ip address
 no shut
 
 int range fa0/11 - 19
-description 'VLAN 30 interface'
+description VLAN 30 interface
 switchport mode access
 switchport access vlan 30
 switchport port-security
@@ -704,7 +722,7 @@ no ip address
 no shut
 
 int fa0/24
-description 'Trunk'
+description Trunk
 switchport trunk native vlan 137
 switchport trunk allowed vlan 10,20,30,137
 switchport mode trunk
@@ -778,14 +796,14 @@ name Blackhole
 
 # vlan10:vlan20:vlan30 = 1:4:4, 1 for vlan137(Trunk), others for blackhole
 int fa0/1 - 2
-description 'VLAN 10 interface'
+description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
 switchport port-security
 no shut
 
 int range fa0/3 - 10
-description 'VLAN 20 interface'
+description VLAN 20 interface
 switchport mode access
 switchport access vlan 20
 switchport port-security
@@ -793,7 +811,7 @@ no ip address
 no shut
 
 int range fa0/11 - 19
-description 'VLAN 30 interface'
+description VLAN 30 interface
 switchport mode access
 switchport access vlan 30
 switchport port-security
@@ -808,7 +826,7 @@ no ip address
 no shut
 
 int fa0/24
-description 'Trunk'
+description Trunk
 switchport trunk native vlan 137
 switchport trunk allowed vlan 10,20,30,137
 switchport mode trunk
