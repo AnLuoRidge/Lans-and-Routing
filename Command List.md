@@ -1,18 +1,18 @@
 #  F**king Command
 
-* [ ]  reload
-* [ ]  IPv6 initial
-* [ ]  password recovery
-* [ ]  fix clock rate
-* [ ]  fix ssh and add acl on them
-* [ ]  fix access-list
-* [ ]  fix dhcp which relate to access-list
-* [ ]  check whether need to shutdown unused port
-* [ ]  do we need ip domain-name ?
-* [ ]  need to check whether the switches we use in the class have extra types of interfaces
-* [ ]  Port security is required on all access ports, with a maximum of one MAC Address per port. Any violation should shut down the port.
-* [ ]  whether vlan on switches need to add ipv6 addr
-* [ ]  ipv6 on switches?
+* [ ] reload
+* [ ] IPv6 initial
+* [ ] password recovery
+* [ ] fix clock rate
+* [x] fix ssh and add acl on them
+* [x] fix access-list
+* [x] fix dhcp which relate to access-list
+* [ ] check whether need to shutdown unused port
+* [ ] do we need ip domain-name ?
+* [ ] need to check whether the switches we use in the class have extra types of interfaces
+* [x] Port security is required on all access ports, with a maximum of one MAC Address per port. Any violation should shut down the port.
+* [ ] whether vlan on switches need to add ipv6 addr
+* [ ] ipv6 on switches?
 
 # Task
 1. CITY Router, CITY1_SW, PC admin (Steven)
@@ -311,7 +311,7 @@ no sh
 
 int g0/1.137
 description Native VLAN 137 gateway
-ip addr 172.22.10.32 255.255.255.240
+ip addr 172.22.10.33 255.255.255.240
 ipv6 addr 2001:50:80:107::/64
 encapsulation dot1Q 137 native
 no shut
@@ -381,7 +381,6 @@ password cisco
 login
 logging synchronous
 exit
-
 ```
 
 
@@ -419,7 +418,7 @@ no shut
 
 int g0/0.137
 description Native VLAN 137 gateway
-ip addr 172.22.13.32 255.255.255.240
+ip addr 172.22.13.33 255.255.255.240
 ipv6 addr 2001:50:80:10B::/64
 encapsulation dot1Q 137 native
 no shut
@@ -735,7 +734,7 @@ no vlan 459
 
 int Vlan 137
 ip addr 172.22.10.33 255.255.255.240
-ip default-gateway 172.22.10.32
+ip default-gateway 172.22.10.33
 
 int Vlan1
 no ip address
@@ -769,7 +768,6 @@ password cisco
 login
 logging synchronous
 exit
-
 ```
 
 
@@ -836,7 +834,7 @@ no vlan 459
 
 int Vlan 137
 ip addr 172.22.13.34 255.255.255.240
-ip default-gateway 172.22.13.32
+ip default-gateway 172.22.13.33
 
 int Vlan1
 no ip address
@@ -870,16 +868,7 @@ password cisco
 login
 logging synchronous
 exit
-
 ```
-
-
-
-## unused ip
-172.22.7.16-172.22.7.255
-172.22.10.48-172.22.11.255
-
-
 
 ## Network Admin(vlan 10)
 
@@ -928,6 +917,7 @@ sh ip i b
 sh ip ro
 ! show ip ssh
 sh ip s
+sh protocols
 ```
 
 ## Connection Order
