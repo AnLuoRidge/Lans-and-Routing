@@ -912,7 +912,7 @@ ip address: 172.22.6.254
 default gateway: 172.22.6.1
 subnet mask 255.255.255.0
 ipv6 address: 2001:50:80:102:FFFF:FFFF:FFFF:FFFF
-ipv6 default gateway: 2001:50:80:102::/64
+ipv6 default gateway: 2001:50:80:102::
 ```
 
 ## GLEBE PC(vlan 20)
@@ -923,7 +923,7 @@ ip address: 172.22.8.2
 default gateway: 172.22.8.1
 subnet mask 255.255.255.0
 ipv6 address: 2001:50:80:104::1/64
-ipv6 default gateway: 2001:50:80:104::/64
+ipv6 default gateway: 2001:50:80:104::
 ```
 
 ## CHATS PC(vlan 10)
@@ -934,7 +934,7 @@ ip address: 172.22.13.2
 default gateway: 172.22.13.1
 subnet mask 255.255.255.224
 ipv6 address: 2001:50:80:10A::1/64
-ipv6 default gateway: 2001:50:80:10A::/64
+ipv6 default gateway: 2001:50:80:10A::
 ```
 
 
