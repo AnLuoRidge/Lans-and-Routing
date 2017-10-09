@@ -420,30 +420,34 @@ enable secret class
 
 int g0/0.10
 description VLAN 10 gateway
+! encapsulation dot1Q 10
+en d 10
 ip addr 172.22.13.1 255.255.255.224
 ipv6 addr 2001:50:80:10A::/64
-encapsulation dot1Q 10
 no shut
 
 int g0/0.20
 description VLAN 20 gateway
+! encapsulation dot1Q 20
+en d 20
 ip addr 172.22.12.1 255.255.255.0
 ipv6 addr 2001:50:80:108::/64
-encapsulation dot1Q 20
 no shut
 
 int g0/0.30
 description VLAN 30 gateway
+! encapsulation dot1Q 30
+en d 30
 ip addr 172.22.12.129 255.255.255.128
 ipv6 addr 2001:50:80:109::/64
-encapsulation dot1Q 30
 no shut
 
 int g0/0.137
 description Native VLAN 137 gateway
+! encapsulation dot1Q 137 native
+en d 137 n
 ip addr 172.22.13.33 255.255.255.240
 ipv6 addr 2001:50:80:10B::/64
-encapsulation dot1Q 137 native
 no shut
 
 int s0/0/1
@@ -453,8 +457,7 @@ ipv6 addr 2001:50:80:10C::1/64
 no shut
 
 int Vlan1
-no ip address
-shutdown
+sh
 
 ip route 0.0.0.0 0.0.0.0 s0/0/1 
 ipv6 route ::/0 s0/0/1 2001:50:80:10C::
@@ -622,7 +625,7 @@ name Management
 vlan 459
 name Blackhole
 
-# vlan10:vlan20:vlan30 = 1:4:2, 1 for vlan137(Trunk), others for blackhole
+! vlan10:vlan20:vlan30 = 1:4:2, 1 for vlan137(Trunk), others for blackhole
 int fa0/1 - 3
 description VLAN 10 interface
 switchport mode access
