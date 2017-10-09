@@ -70,6 +70,7 @@ banner motd #Authorized access only!#
 ip domain-name ccna-lab.com
 ! in lab, use crypto key generate rsa modulus 1024
 cr k g r
+y
 1024
 username CaseStudy privilege 15 secret cisco1
 
@@ -295,6 +296,9 @@ ip address 172.22.14.2 255.255.255.252
 ipv6 address 2001:50:80:10D::1/64
 no shut
 
+in g0/1
+no shut
+
 in g0/1.10
 description VLAN 10 gateway
 ! encapsulation dot1Q 10
@@ -417,6 +421,9 @@ ipv u
 no ip domain-l
 
 enable secret class
+
+in g0/0
+no shut
 
 int g0/0.10
 description VLAN 10 gateway
@@ -624,25 +631,25 @@ vlan 137
 name Management
 vlan 459
 name Blackhole
+ex
 
 ! vlan10:vlan20:vlan30 = 1:4:2, 1 for vlan137(Trunk), others for blackhole
-int fa0/1 - 3
+! in range
+in r fa0/1 - 3
 description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
 switchport port-security
-no ip address
 no shut
 
-int range fa0/4 - 15
+in r fa0/4 - 15
 description VLAN 20 interface
 switchport mode access
 switchport access vlan 20
 switchport port-security
-no ip address
 no shut
 
-int range f0/16 - 21
+in range f0/16 - 21
 description VLAN 30 interface
 switchport mode access
 switchport access vlan 30
@@ -650,14 +657,14 @@ switchport port-security
 no ip address
 no shut
 
-int fa0/24
+in fa0/24
 description Trunk
 switchport trunk native vlan 137
 switchport trunk allowed vlan 10,20,30,137
 switchport mode trunk
 no shut
 
-int range fa0/22 - 23
+in range fa0/22 - 23
 switchport mode access
 switchport access vlan 459
 switchport port-security
@@ -679,9 +686,10 @@ access-list 1 deny any
 
 banner motd #Authorized access only!#
 
-ip domain-name ccna-lab.com
+! ip domain-name CITY2_SW.ccna-lab.com
 ! in lab, use crypto key generate rsa modulus 1024
 cr k g r
+y
 1024
 username CaseStudy privilege 15 secret cisco1
 
