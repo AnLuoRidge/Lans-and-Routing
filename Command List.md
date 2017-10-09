@@ -25,6 +25,8 @@
 
 `Ctr - E` : move to end
 
+`Ctr - W` : del previous word
+
 ## ISP
 ```
 ! write erase
@@ -823,8 +825,9 @@ exit
 conf t
 hostname GLEBE_SW
 no ip domain-lookup
+ipv u
 
-enable secret 5 class
+enable secret class
 
 vlan 10
 name Excutive
@@ -836,9 +839,10 @@ vlan 137
 name Management
 vlan 459
 name Blackhole
+ex
 
 # vlan10:vlan20:vlan30 = 1:4:4, 1 for vlan137(Trunk), others for blackhole
-int fa0/1 - 2
+int r fa0/1 - 2
 description VLAN 10 interface
 switchport mode access
 switchport access vlan 10
@@ -891,7 +895,10 @@ access-list 1 deny any
 banner motd #Authorized access only!#
 
 ip domain-name ccna-lab.com
-crypto key generate rsa modulus 1024
+! crypto key generate rsa modulus 1024
+cr k g r
+1024
+
 username CaseStudy privilege 15 secret cisco1
 
 line vty 0 15
@@ -960,6 +967,7 @@ show port-security
 ```
 sh ip i b
 sh ip ro
+sh ipv ro
 ! show ip ssh
 sh ip s
 sh protocols
@@ -981,3 +989,17 @@ CITY_SW con
 GLEBE - CHATS
 CITY - GLEBE
 CITY - CHATS
+
+## Test Case
+normal: all hosts ping 11.11.11.11 & 2001:11:11:11:：11
+failure: all hosts ping 11.11.11.11 & 2001:11:11:11:：11
+host ssh to devices: should be denied
+NA ssh to devices
+DHCP, SLAAC
+
+City VLAN 10 - ISP
+CTY Host - GLE host
+GLE - CHS
+DHCP
+IPv6
+SSH
