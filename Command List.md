@@ -142,9 +142,6 @@ ipv ad 2001:50:80:10D::/64
 ! no shutdown
 no sh
 
-in g0/1
-no shut
-
 in g0/1.10
 des VLAN 10 gateway
 ! encapsulation dot1Q 10
@@ -152,7 +149,6 @@ en d 10
 ip ad 172.22.6.1 255.255.255.0
 ipv ad 2001:50:80:102::/64
 ip nat inside
-no sh
 
 in g0/1.20
 des VLAN 20 gateway
@@ -162,7 +158,6 @@ ipv ad 2001:50:80:100::/64
 ! DHCP
 ip helper-address 172.22.14.6
 ip nat inside
-no sh
 
 int g0/1.30
 des VLAN 30 gateway
@@ -172,7 +167,6 @@ ipv ad 2001:50:80:101::/64
 ! DHCP
 ip helper-address 172.22.14.6
 ip nat inside
-no sh
 
 int g0/1.137
 des Native VLAN 137 gateway
@@ -180,7 +174,9 @@ des Native VLAN 137 gateway
 en d 137 n
 ip ad 172.22.7.1 255.255.255.240
 ipv ad 2001:50:80:103::/64
-no sh
+
+in g0/1
+no shut
 
 int Vlan1
 sh
@@ -297,44 +293,38 @@ ip address 172.22.14.2 255.255.255.252
 ipv6 address 2001:50:80:10D::1/64
 no shut
 
-in g0/1
-no shut
-
 in g0/1.10
 description VLAN 10 gateway
 ! encapsulation dot1Q 10
 en d 10
 ip addr 172.22.10.1 255.255.255.224
 ipv6 addr 2001:50:80:106::/64
-no shut
+ip nat inside
 
 int g0/1.20
 description VLAN 20 gateway
 en d 20
 ip addr 172.22.8.1 255.255.255.0
 ipv6 addr 2001:50:80:104::/64
-
 ip helper-address 172.22.14.6
 ip nat inside
-no shut
 
 int g0/1.30
 description VLAN 30 gateway
 en d 30
 ip addr 172.22.9.1 255.255.255.0
 ipv6 addr 2001:50:80:105::/64
-
 ip helper-address 172.22.14.6
 ip nat inside
-no sh
 
 int g0/1.137
 description Native VLAN 137 gateway
-
 ! encapsulation dot1Q 137 native
 en d 137 n
 ip ad 172.22.10.33 255.255.255.240
 ipv6 addr 2001:50:80:107::/64
+
+in g0/1
 no shut
 
 int s0/0/1
@@ -433,7 +423,6 @@ description VLAN 10 gateway
 en d 10
 ip addr 172.22.13.1 255.255.255.224
 ipv6 addr 2001:50:80:10A::/64
-no shut
 
 int g0/0.20
 description VLAN 20 gateway
@@ -441,7 +430,6 @@ description VLAN 20 gateway
 en d 20
 ip addr 172.22.12.1 255.255.255.0
 ipv6 addr 2001:50:80:108::/64
-no shut
 
 int g0/0.30
 description VLAN 30 gateway
@@ -449,7 +437,6 @@ description VLAN 30 gateway
 en d 30
 ip addr 172.22.12.129 255.255.255.128
 ipv6 addr 2001:50:80:109::/64
-no shut
 
 int g0/0.137
 description Native VLAN 137 gateway
@@ -457,6 +444,8 @@ description Native VLAN 137 gateway
 en d 137 n
 ip addr 172.22.13.33 255.255.255.240
 ipv6 addr 2001:50:80:10B::/64
+
+int g0/0
 no shut
 
 int s0/0/1
