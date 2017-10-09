@@ -151,6 +151,7 @@ des VLAN 10 gateway
 en d 10
 ip ad 172.22.6.1 255.255.255.0
 ipv ad 2001:50:80:102::/64
+ip nat inside
 no sh
 
 in g0/1.20
