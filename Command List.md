@@ -111,6 +111,7 @@ ser p
 ba m #Authorized access only!#
 
 in s0/0/0
+! description 'Link to ISP'
 des Link to ISP
 ip ad 50.80.120.18 255.255.255.252
 ipv ad 2001:50:80:120::1/64
@@ -169,9 +170,6 @@ des Native VLAN 137 gateway
 en d 137 n
 ip ad 172.22.7.1 255.255.255.240
 ipv ad 2001:50:80:103::/64
-! DHCP
-ip helper-address 172.22.14.6
-ip n i
 no sh
 
 int Vlan1
@@ -275,13 +273,13 @@ no ip domain-l
 
 enable secret class
 
-int g0/0
+in g0/0
 des Link to CITY
 ip address 172.22.14.2 255.255.255.252
 ipv6 address 2001:50:80:10D::1/64
 no shut
 
-int g0/1.10
+in g0/1.10
 description VLAN 10 gateway
 ! encapsulation dot1Q 10
 en d 10
